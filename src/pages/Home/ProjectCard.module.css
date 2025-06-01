@@ -1,0 +1,16 @@
+:root {
+  --warning: #ffa726;
+}
+
+.soon {
+  animation: soon-exp 1s ease 0s infinite alternate-reverse;
+}
+
+@keyframes soon-exp {
+  to {
+    border-color: var(--warning);
+    box-shadow: 0px 0px 10px var(--warning);
+    -webkit-box-shadow: 0px 0px 10px var(--warning);
+    -moz-box-shadow: 0px 0px 10px var(--warning);
+  }
+}
