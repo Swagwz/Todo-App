@@ -64,7 +64,7 @@ function App() {
   return (
     <ThemeProvider theme={setting.dark_mode ? dark : light}>
       <CssBaseline />
-      <BrowserRouter>
+      <BrowserRouter basename="/Todo-App">
         <Routes>
           <Route path="/" element={<RootLayout />}>
             <Route index element={<Home />} />

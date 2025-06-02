@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 import { motion } from "motion/react";
 
 export default function Expandable({ children, expand }) {

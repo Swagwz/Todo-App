@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { IconButton, Stack } from "@mui/material";
 
-import SaveIcon from "@mui/icons-material/Save";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 
 import ClearableInput from "../../../components/ClearableInput";
@@ -37,7 +37,7 @@ export default function TitleForm({
       />
       <Stack direction="row">
         <IconButton title="save" type="submit" size="small">
-          <SaveIcon />
+          <CheckCircleIcon />
         </IconButton>
         <IconButton
           title="cancel"

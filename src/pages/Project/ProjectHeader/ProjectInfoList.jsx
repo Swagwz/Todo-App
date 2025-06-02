@@ -1,10 +1,9 @@
 import React from "react";
 import dayjs from "dayjs";
 
-import { Divider, Stack } from "@mui/material";
+import { Divider, Box, Stack, Typography } from "@mui/material";
 
 import { projectStatus } from "../../../configs/projectStatus";
-import ProjectInfoItem from "./ProjectInfoItem";
 
 export default function ProjectInfoList({ project }) {
   const remind_before_str = `${project.remind_before.value} ${
@@ -57,6 +56,29 @@ export default function ProjectInfoList({ project }) {
         placeholder="Project last edit time"
         content={dayjs(project.updateAt).format("YYYY/MM/DD HH:mm")}
       />
+    </Stack>
+  );
+}
+
+function ProjectInfoItem({ title, placeholder, content, color }) {
+  return (
+    <Stack direction="row" color="text.main" sx={{ flexWrap: "wrap" }}>
+      <Box sx={{ width: 150 }}>{title}</Box>
+      {content ? (
+        <Typography
+          color={color || "text.secondary"}
+          sx={{
+            flex: "1 0 300px",
+            overflowWrap: "anywhere",
+          }}
+        >
+          {content}
+        </Typography>
+      ) : (
+        <Typography color="text.disabled" sx={{ flex: "1 0 300px" }}>
+          {placeholder}
+        </Typography>
+      )}
     </Stack>
   );
 }

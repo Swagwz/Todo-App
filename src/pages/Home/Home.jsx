@@ -34,27 +34,29 @@ export default function Home() {
   return (
     <>
       <Paper sx={{ p: 2 }}>
-        <Stack
-          direction="row"
-          gap={1}
-          sx={{ mb: 2, alignItems: "center", flexWrap: "wrap" }}
-        >
+        <Stack direction="row" gap={1} sx={{ mb: 2, alignItems: "center" }}>
           <FilterAltIcon />
-          {PROJECT_VIEWS.map(({ value, label, color }) => (
-            <Chip
-              key={value}
-              label={label}
-              value={value}
-              color={tab === value ? color : "default"}
-              onClick={() => setTab(value)}
-            />
-          ))}
+          <Stack
+            gap={1}
+            direction="row"
+            sx={{ overflow: "auto", py: 1, px: 2 }}
+          >
+            {PROJECT_VIEWS.map(({ value, label, color }) => (
+              <Chip
+                key={value}
+                label={label}
+                value={value}
+                color={tab === value ? color : "default"}
+                onClick={() => setTab(value)}
+              />
+            ))}
+          </Stack>
         </Stack>
         {filteredProjects.length > 0 ? (
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
               gap: 1,
             }}
           >

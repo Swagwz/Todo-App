@@ -1,14 +1,15 @@
+// eslint-disable-next-line
 import { motion } from "motion/react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-import { Box, Checkbox, IconButton, Stack, Typography } from "@mui/material";
+import { Checkbox, IconButton, Stack, Typography } from "@mui/material";
 
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-import TodoWrapper from "../../../components/TodoWrapper";
+import TodoWrapper from "../../../../../components/TodoWrapper";
 
 const variant = {
   hidden: {
@@ -23,7 +24,7 @@ const variant = {
   },
 };
 
-export default function TodoItemDragView({ todo }) {
+export default function SubTodoDragPreview({ subTodo: st }) {
   const {
     attributes,
     listeners,
@@ -31,7 +32,7 @@ export default function TodoItemDragView({ todo }) {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: todo.id });
+  } = useSortable({ id: st.id });
 
   const style = {
     transform: CSS.Translate.toString(transform),
@@ -39,24 +40,10 @@ export default function TodoItemDragView({ todo }) {
     zIndex: isDragging ? 999 : "auto",
     touchAction: "none",
   };
-
   return (
-    <Box style={style} ref={setNodeRef}>
-      <TodoWrapper
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 1,
-          mb: 0.5,
-          cursor: "pointer",
-          "&:hover": {
-            outline: "2px solid",
-            outlineColor: "info.main",
-          },
-        }}
-      >
-        <Checkbox checked={todo.completed} />
+    <TodoWrapper variant="secondary" style={style} ref={setNodeRef}>
+      <Stack direction="row" gap={1} sx={{ alignItems: "center" }}>
+        <Checkbox checked={st.completed} disabled />
 
         <Typography
           sx={{
@@ -65,20 +52,19 @@ export default function TodoItemDragView({ todo }) {
             textOverflow: "ellipsis",
           }}
         >
-          {todo.title}
+          {st.title}
         </Typography>
         <Stack sx={{ ml: "auto" }} direction="row">
-          {todo.subTodos.length > 0 && (
-            <IconButton size="small" title="expand" disabled>
-              <ExpandLessIcon
-                sx={{
-                  rotate: "180deg",
-                }}
-              />
-            </IconButton>
-          )}
-          <IconButton size="small" title="create subTodo" disabled>
-            <MoreHorizIcon />
+          <IconButton size="small" title="edit title" disabled>
+            <EditIcon />
+          </IconButton>
+          <IconButton
+            size="small"
+            title="delete subTodo"
+            sx={{ color: "error.main" }}
+            disabled
+          >
+            <DeleteIcon />
           </IconButton>
           <motion.div
             variants={variant}
@@ -91,7 +77,7 @@ export default function TodoItemDragView({ todo }) {
             </IconButton>
           </motion.div>
         </Stack>
-      </TodoWrapper>
-    </Box>
+      </Stack>
+    </TodoWrapper>
   );
 }

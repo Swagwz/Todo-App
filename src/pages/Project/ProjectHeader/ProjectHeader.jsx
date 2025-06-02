@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import React, { useContext, useState } from "react";
+import { useNavigate } from "react-router";
 
 import {
   Divider,
@@ -23,22 +23,22 @@ import ProjectInfoList from "./ProjectInfoList";
 import Expandable from "../../../components/Expandable";
 import ConfirmDialog from "../../../components/ConfirmDialog";
 import { useProjectStore } from "../../../stores/useProjectStore";
+import { ProjectContext } from "../../../contexts/ProjectContext";
 
-export default function ProjectHeader({ project }) {
+export default function ProjectHeader() {
+  const { project } = useContext(ProjectContext);
   const [anchorEl, setAnchorEl] = useState(null);
   const [edit, setEdit] = useState(false);
   const [show, setShow] = useState(false);
 
   const update = useProjectStore((s) => s.update_project);
 
-  const { id } = useParams();
-
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handlePin = () => {
-    update(id, { pinned: !project.pinned });
+    update(project.id, { pinned: !project.pinned });
   };
 
   return (
@@ -91,13 +91,9 @@ export default function ProjectHeader({ project }) {
         </IconButton>
       </Divider>
 
-      <ProjectMenu {...{ anchorEl, setAnchorEl, setEdit, id }} />
+      <ProjectMenu {...{ anchorEl, setAnchorEl, setEdit, id: project.id }} />
 
-      {edit && (
-        <EditProjectDialog
-          {...{ open: edit, setOpen: setEdit, project_data: project }}
-        />
-      )}
+      {edit && <EditProjectDialog {...{ open: edit, setOpen: setEdit }} />}
     </>
   );
 }

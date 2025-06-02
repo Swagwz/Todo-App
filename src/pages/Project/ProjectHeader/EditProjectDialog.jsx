@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
 
 import {
@@ -18,9 +18,11 @@ import { DateTimeField } from "@mui/x-date-pickers/DateTimeField";
 import { useProjectStore } from "../../../stores/useProjectStore";
 
 import RemindTimeField from "../../../components/RemindTimeField";
+import { ProjectContext } from "../../../contexts/ProjectContext";
 
-export default function EditProjectDialog({ open, setOpen, project_data }) {
-  const [project, setProject] = useState({ ...project_data });
+export default function EditProjectDialog({ open, setOpen }) {
+  const { project } = useContext(ProjectContext);
+  const [editData, setEditData] = useState({ ...project });
   const update_project = useProjectStore((s) => s.update_project);
 
   const inputRef = useRef(null);
@@ -28,12 +30,12 @@ export default function EditProjectDialog({ open, setOpen, project_data }) {
   const handleCreate = (e) => {
     e.preventDefault();
 
-    if (!project.title.trim()) return;
-    if (project.deadline && !dayjs(project.deadline).isValid()) return;
-    update_project(project_data.id, {
-      ...project,
-      title: project.title.trim(),
-      description: project.description.trim(),
+    if (!editData.title.trim()) return;
+    if (editData.deadline && !dayjs(editData.deadline).isValid()) return;
+    update_project(project.id, {
+      ...editData,
+      title: editData.title.trim(),
+      description: editData.description.trim(),
     });
     setOpen(false);
   };
@@ -57,9 +59,9 @@ export default function EditProjectDialog({ open, setOpen, project_data }) {
         <Stack gap={2} mt={2}>
           <TextField
             label="Projec title"
-            value={project.title}
+            value={editData.title}
             onChange={(e) =>
-              setProject((prev) => ({ ...prev, title: e.target.value }))
+              setEditData((prev) => ({ ...prev, title: e.target.value }))
             }
             required
             autoComplete="off"
@@ -69,13 +71,13 @@ export default function EditProjectDialog({ open, setOpen, project_data }) {
             <DateTimeField
               label="Deadline"
               format="YYYY/MM/DD HH:mm"
-              value={project.deadline && dayjs(project.deadline)}
+              value={editData.deadline && dayjs(editData.deadline)}
               onClick={() => {
-                !project.deadline &&
-                  setProject((prev) => ({ ...prev, deadline: dayjs() }));
+                !editData.deadline &&
+                  setEditData((prev) => ({ ...prev, deadline: dayjs() }));
               }}
               onChange={(v) => {
-                setProject((prev) => ({ ...prev, deadline: v }));
+                setEditData((prev) => ({ ...prev, deadline: v }));
               }}
               clearable
             />
@@ -83,19 +85,19 @@ export default function EditProjectDialog({ open, setOpen, project_data }) {
           <RemindTimeField
             {...{
               remind_before: {
-                value: project.remind_before.value,
-                unit: project.remind_before.unit,
+                value: editData.remind_before.value,
+                unit: editData.remind_before.unit,
               },
               onChange: (value, unit) => {
-                setProject((p) => ({ ...p, remind_before: { value, unit } }));
+                setEditData((p) => ({ ...p, remind_before: { value, unit } }));
               },
             }}
           />
           <TextField
             label="Description"
-            value={project.description}
+            value={editData.description}
             onChange={(e) =>
-              setProject((prev) => ({ ...prev, description: e.target.value }))
+              setEditData((prev) => ({ ...prev, description: e.target.value }))
             }
             autoComplete="off"
             multiline

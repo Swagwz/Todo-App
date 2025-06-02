@@ -1,28 +1,31 @@
-import React, { useState } from "react";
-import { useParams } from "react-router";
+import React, { useContext, useState } from "react";
 
 import { Checkbox, IconButton, Stack, Typography } from "@mui/material";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import { useProjectStore } from "../../../stores/useProjectStore";
-import TodoWrapper from "../../../components/TodoWrapper";
-import TitleForm from "./TitleForm";
-import { useSettingStore } from "../../../stores/useSettingStore";
-import ConfirmDialog from "../../../components/ConfirmDialog";
+import { useProjectStore } from "../../../../../stores/useProjectStore";
+import { useSettingStore } from "../../../../../stores/useSettingStore";
 
-export default function SubTodoItem({ subTodo: st, todo }) {
+import TitleForm from "../../TitleForm";
+import TodoWrapper from "../../../../../components/TodoWrapper";
+import ConfirmDialog from "../../../../../components/ConfirmDialog";
+import { TodoContext } from "../../../../../contexts/TodoContext";
+import { ProjectContext } from "../../../../../contexts/ProjectContext";
+
+export default function SubTodoItem({ subTodo: st }) {
+  const { todo } = useContext(TodoContext);
+  const { project } = useContext(ProjectContext);
   const [edit, setEdit] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
 
-  const { id } = useParams();
   const update_subTodo = useProjectStore((s) => s.update_subTodo);
   const delete_subTodo = useProjectStore((s) => s.delete_subTodo);
   const ask_before_delete = useSettingStore((s) => s.setting.ask_before_delete);
 
   const handleCheck = (e, st) => {
-    update_subTodo(id, todo.id, st.id, {
+    update_subTodo(project.id, todo.id, st.id, {
       completed: e.target.checked,
     });
   };
@@ -38,7 +41,7 @@ export default function SubTodoItem({ subTodo: st, todo }) {
   };
 
   const handleDelete = () => {
-    delete_subTodo(id, todo.id, st.id);
+    delete_subTodo(project.id, todo.id, st.id);
   };
 
   const handleCancel = () => {
@@ -48,7 +51,7 @@ export default function SubTodoItem({ subTodo: st, todo }) {
   const handleTitleChange = (e, newTitle) => {
     e.preventDefault();
     if (!newTitle.trim()) return;
-    update_subTodo(id, todo.id, st.id, { title: newTitle.trim() });
+    update_subTodo(project.id, todo.id, st.id, { title: newTitle.trim() });
     setEdit(false);
   };
 
