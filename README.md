@@ -30,7 +30,7 @@ Help you managing your task.
 
 - **Frontend Framework**: React
 - **UI Library**: Material UI (MUI)
-- **Animations**: Framer Motion
+- **Animations**: Motion
 - **State Management**: Zustand
 - **Drag and Drop**: dnd-kit
 
