@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { BrowserRouter, Route, Routes } from "react-router";
+import { HashRouter, Route, Routes } from "react-router";
 
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 
@@ -64,7 +64,7 @@ function App() {
   return (
     <ThemeProvider theme={setting.dark_mode ? dark : light}>
       <CssBaseline />
-      <BrowserRouter basename="/Todo-App">
+      <HashRouter>
         <Routes>
           <Route path="/" element={<RootLayout />}>
             <Route index element={<Home />} />
@@ -72,7 +72,7 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </ThemeProvider>
   );
 }
