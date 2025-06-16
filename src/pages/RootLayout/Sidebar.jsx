@@ -27,7 +27,7 @@ import { useSettingStore } from "../../stores/useSettingStore";
 export default function Sidebar({ open, setOpen, handleSettingOpen }) {
   const projects = useProjectStore((s) => s.projects);
   const [tab, setTab] = useState("all");
-  const shouldReverse = useSettingStore((s) => s.setting.newest_project_first);
+  const shouldReverse = useSettingStore((s) => s.setting.newest_project_top);
   const filteredProjects = useMemo(() => {
     const filterFn = PROJECT_FILTERS[tab] ?? PROJECT_FILTERS["all"];
     return filterFn(projects, shouldReverse);
