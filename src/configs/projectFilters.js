@@ -1,10 +1,13 @@
 import { projectStatus } from "../configs/projectStatus";
 
 export const PROJECT_FILTERS = {
-  all: (projects) => [
-    ...projects.filter((p) => p.pinned),
-    ...projects.filter((p) => !p.pinned),
-  ],
+  all: (projects, shouldReverse) => {
+    let pinned = projects.filter((p) => p.pinned);
+    let unpinned = projects.filter((p) => !p.pinned);
+    if (shouldReverse) unpinned.reverse();
+
+    return [...pinned, ...unpinned];
+  },
   completed: (projects) =>
     projects.filter((p) => projectStatus(p).statusCode === 1),
   overdue: (projects) =>

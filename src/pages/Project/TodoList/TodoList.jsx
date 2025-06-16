@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 // eslint-disable-next-line
 import { AnimatePresence, motion } from "motion/react";
 
@@ -11,10 +11,16 @@ import DragTodos from "./DragTodos/DragTodos";
 
 import { useProjectStore } from "../../../stores/useProjectStore";
 import { ProjectContext } from "../../../contexts/ProjectContext";
+import { useSettingStore } from "../../../stores/useSettingStore";
 
 export default function TodoList() {
   const { create, setCreate, drag, project } = useContext(ProjectContext);
   const create_todo = useProjectStore((s) => s.create_todo);
+  const shouldReverse = useSettingStore((s) => s.setting.newest_todo_top);
+  const displayed_todos = useMemo(
+    () => (shouldReverse ? [...project.todos].reverse() : project.todos),
+    [project, shouldReverse]
+  );
 
   // create TitleForm
   const handleCancel = () => {
@@ -53,7 +59,7 @@ export default function TodoList() {
               )}
             </AnimatePresence>
             <AnimatePresence>
-              {project.todos.map((todo) => (
+              {displayed_todos.map((todo) => (
                 <TodoItem key={todo.id} todo={todo} />
               ))}
             </AnimatePresence>

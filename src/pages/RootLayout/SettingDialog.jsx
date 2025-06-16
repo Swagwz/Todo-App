@@ -42,6 +42,8 @@ export default function SettingDialog({ open, setOpen }) {
           <SwitchSettingItem title="Dark mode" />
           <SwitchSettingItem title="Expand all" />
           <SwitchSettingItem title="Ask before delete" />
+          <SwitchSettingItem title="Newest project top" />
+          <SwitchSettingItem title="Newest todo top" />
           <RemindTimeField
             remind_before={{
               value: setting.remind_before.value,
@@ -54,18 +56,6 @@ export default function SettingDialog({ open, setOpen }) {
         </Stack>
       </DialogContent>
     </Dialog>
-  );
-}
-
-function SettingItem({ children, title }) {
-  return (
-    <Stack
-      direction="row"
-      sx={{ alignItems: "center", justifyContent: "space-between" }}
-    >
-      <Typography>{title}</Typography>
-      {children}
-    </Stack>
   );
 }
 

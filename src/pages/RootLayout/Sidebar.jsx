@@ -22,15 +22,16 @@ import { useProjectStore } from "../../stores/useProjectStore";
 import { projectStatus } from "../../configs/projectStatus";
 import { PROJECT_FILTERS } from "../../configs/projectFilters";
 import { PROJECT_VIEWS } from "../../configs/projectViews";
+import { useSettingStore } from "../../stores/useSettingStore";
 
 export default function Sidebar({ open, setOpen, handleSettingOpen }) {
   const projects = useProjectStore((s) => s.projects);
   const [tab, setTab] = useState("all");
-
+  const shouldReverse = useSettingStore((s) => s.setting.newest_project_first);
   const filteredProjects = useMemo(() => {
     const filterFn = PROJECT_FILTERS[tab] ?? PROJECT_FILTERS["all"];
-    return filterFn(projects);
-  }, [tab, projects]);
+    return filterFn(projects, shouldReverse);
+  }, [tab, projects, shouldReverse]);
 
   const handleChange = (e) => setTab(e.target.value);
 
@@ -69,10 +70,13 @@ export default function Sidebar({ open, setOpen, handleSettingOpen }) {
         <Divider />
         <List sx={{ gap: 1, flexGrow: 1, overflow: "auto" }}>
           {filteredProjects.length > 0 ? (
-            filteredProjects.map((project) => (
+            (shouldReverse && tab !== "all"
+              ? [...filteredProjects].reverse()
+              : filteredProjects
+            ).map((project) => (
               <SidebarListItem
+                {...{ tab, project, setOpen }}
                 key={project.id}
-                {...{ project, setOpen, tab }}
               />
             ))
           ) : (

@@ -22,10 +22,15 @@ import { useProjectStore } from "../../../../../stores/useProjectStore";
 
 import { TodoContext } from "../../../../../contexts/TodoContext";
 import { ProjectContext } from "../../../../../contexts/ProjectContext";
+import { useSettingStore } from "../../../../../stores/useSettingStore";
 
 export default function DragSubTodos() {
   const { project } = useContext(ProjectContext);
   const { todo } = useContext(TodoContext);
+  const shouldReverse = useSettingStore((s) => s.setting.newest_todo_top);
+  const displayed_subTodos = shouldReverse
+    ? [...todo.subTodos].reverse()
+    : todo.subTodos;
   const update_todo = useProjectStore((s) => s.update_todo);
   const sensors = useSensors(useSensor(PointerSensor));
   const handleDragEnd = (event) => {
@@ -47,7 +52,7 @@ export default function DragSubTodos() {
         key="drag"
       >
         <SortableContext items={todo.subTodos} strategy={rectSortingStrategy}>
-          {todo.subTodos.map((st) => (
+          {displayed_subTodos.map((st) => (
             <SubTodoDragPreview key={st.id} subTodo={st} />
           ))}
         </SortableContext>

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useMemo } from "react";
 
 import {
   DndContext,
@@ -17,11 +17,16 @@ import { findIndex } from "../../../../utils/findIndex";
 import { ProjectContext } from "../../../../contexts/ProjectContext";
 import { useProjectStore } from "../../../../stores/useProjectStore";
 import TodoDragPreview from "./TodoDragPreview";
+import { useSettingStore } from "../../../../stores/useSettingStore";
 
 export default function DragTodos() {
   const { project } = useContext(ProjectContext);
   const update_project = useProjectStore((s) => s.update_project);
-
+  const shouldReverse = useSettingStore((s) => s.setting.newest_todo_top);
+  const displayed_todos = useMemo(
+    () => (shouldReverse ? [...project.todos].reverse() : project.todos),
+    [project, shouldReverse]
+  );
   const sensors = useSensors(useSensor(PointerSensor));
   const handleDragEnd = (event) => {
     const { active, over } = event;
@@ -41,7 +46,7 @@ export default function DragTodos() {
       key="drag"
     >
       <SortableContext items={project.todos} strategy={rectSortingStrategy}>
-        {project.todos.map((todo) => (
+        {displayed_todos.map((todo) => (
           <TodoDragPreview key={todo.id} todo={todo} />
         ))}
       </SortableContext>

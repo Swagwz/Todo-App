@@ -10,11 +10,16 @@ import TodoWrapper from "../../../../../components/TodoWrapper";
 import { TodoContext } from "../../../../../contexts/TodoContext";
 import { ProjectContext } from "../../../../../contexts/ProjectContext";
 import { useProjectStore } from "../../../../../stores/useProjectStore";
+import { useSettingStore } from "../../../../../stores/useSettingStore";
 
 export default function SubTodoList() {
   const { project } = useContext(ProjectContext);
   const { expand, create, setCreate, setExpand, todo } =
     useContext(TodoContext);
+  const shouldReverse = useSettingStore((s) => s.setting.newest_todo_top);
+  const displayed_subTodos = shouldReverse
+    ? [...todo.subTodos].reverse()
+    : todo.subTodos;
   const create_subTodo = useProjectStore((s) => s.create_subTodo);
 
   const handleCancelCreate = () => {
@@ -41,7 +46,7 @@ export default function SubTodoList() {
             />
           </TodoWrapper>
         )}
-        {todo.subTodos.map((st) => (
+        {displayed_subTodos.map((st) => (
           <SubTodoItem key={st.id} subTodo={st} />
         ))}
       </Stack>
