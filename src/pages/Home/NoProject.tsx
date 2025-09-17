@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 // eslint-disable-next-line
 import { motion } from "motion/react";
 

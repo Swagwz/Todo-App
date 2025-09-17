@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useLocation, useParams } from "react-router";
 import { useProjectStore } from "../stores/useProjectStore";
 
