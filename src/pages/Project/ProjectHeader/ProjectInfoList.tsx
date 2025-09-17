@@ -1,16 +1,29 @@
 import React from "react";
 import dayjs from "dayjs";
 
-import { Divider, Box, Stack, Typography } from "@mui/material";
+import {
+  Divider,
+  Box,
+  Stack,
+  Typography,
+  type TypographyProps,
+} from "@mui/material";
 
-import { projectStatus } from "../../../configs/projectStatus";
+import { getProjectStatus } from "../../../configs/projectStatus";
+import type { Project } from "../../../types";
 
-export default function ProjectInfoList({ project }) {
+interface ProjectInfoListProps {
+  project: Project;
+}
+
+export default function ProjectInfoList({ project }: ProjectInfoListProps) {
   const remind_before_str = `${project.remind_before.value} ${
     project.remind_before.value > 1
       ? project.remind_before.unit
       : project.remind_before.unit.slice(0, -1)
   }`;
+
+  const projectStatus = getProjectStatus(project);
 
   return (
     <Stack mt={2} gap={1} divider={<Divider />}>
@@ -23,20 +36,21 @@ export default function ProjectInfoList({ project }) {
       <ProjectInfoItem
         title="Status"
         placeholder="No deadline"
-        content={projectStatus(project).status}
-        color={projectStatus(project).color}
+        content={projectStatus.status}
+        color={projectStatus.color}
       />
 
       <ProjectInfoItem
         title="Deadline"
         placeholder="No deadline"
         content={
-          project.deadline &&
-          `${dayjs(project.deadline).fromNow()} (${dayjs(
-            project.deadline
-          ).format("YYYY/MM/DD HH:mm")})`
+          project.deadline
+            ? `${dayjs(project.deadline).fromNow()} (${dayjs(
+                project.deadline
+              ).format("YYYY/MM/DD HH:mm")})`
+            : ""
         }
-        color={projectStatus(project).color}
+        color={projectStatus.color}
       />
 
       <ProjectInfoItem
@@ -60,7 +74,19 @@ export default function ProjectInfoList({ project }) {
   );
 }
 
-function ProjectInfoItem({ title, placeholder, content, color }) {
+interface ProjectInfoItemProps {
+  title: string;
+  placeholder: string;
+  content: string;
+  color?: TypographyProps["color"];
+}
+
+function ProjectInfoItem({
+  title,
+  placeholder,
+  content,
+  color,
+}: ProjectInfoItemProps) {
   return (
     <Stack direction="row" color="text.main" sx={{ flexWrap: "wrap" }}>
       <Box sx={{ width: 150 }}>{title}</Box>

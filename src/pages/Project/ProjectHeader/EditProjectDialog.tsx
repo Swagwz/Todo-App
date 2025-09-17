@@ -19,15 +19,19 @@ import { useProjectStore } from "../../../stores/useProjectStore";
 
 import RemindTimeField from "../../../components/RemindTimeField";
 import { ProjectContext } from "../../../contexts/ProjectContext";
+import type { OpenStateProps, Project } from "../../../types";
 
-export default function EditProjectDialog({ open, setOpen }) {
-  const { project } = useContext(ProjectContext);
-  const [editData, setEditData] = useState({ ...project });
+export default function EditProjectDialog({ open, setOpen }: OpenStateProps) {
+  const context = useContext(ProjectContext);
+  if (!context) return null;
+
+  const { project } = context;
+  const [editData, setEditData] = useState<Project>({ ...project });
   const update_project = useProjectStore((s) => s.update_project);
 
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
 
-  const handleCreate = (e) => {
+  const handleCreate = (e: React.FormEvent<HTMLDivElement>) => {
     e.preventDefault();
 
     if (!editData.title.trim()) return;
@@ -84,10 +88,7 @@ export default function EditProjectDialog({ open, setOpen }) {
           </LocalizationProvider>
           <RemindTimeField
             {...{
-              remind_before: {
-                value: editData.remind_before.value,
-                unit: editData.remind_before.unit,
-              },
+              remind_before: editData.remind_before,
               onChange: (value, unit) => {
                 setEditData((p) => ({ ...p, remind_before: { value, unit } }));
               },

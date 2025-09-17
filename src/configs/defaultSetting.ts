@@ -1,4 +1,6 @@
-export const DEFAULT_SETTING = {
+import type { Setting, SettingKey } from "../types";
+
+export const DEFAULT_SETTING: Setting = {
   dark_mode: true,
   expand_all: false,
   ask_before_delete: true,
@@ -9,3 +11,10 @@ export const DEFAULT_SETTING = {
     unit: "days",
   },
 };
+
+export const Bool_Setting: [SettingKey, Setting[SettingKey]][] = Object.entries(
+  DEFAULT_SETTING
+).filter(([_, value]) => typeof value === "boolean") as [
+  SettingKey,
+  Setting[SettingKey]
+][];

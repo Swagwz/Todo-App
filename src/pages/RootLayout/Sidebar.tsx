@@ -19,21 +19,39 @@ import CloseIcon from "@mui/icons-material/Close";
 import SettingsIcon from "@mui/icons-material/Settings";
 
 import { useProjectStore } from "../../stores/useProjectStore";
-import { projectStatus } from "../../configs/projectStatus";
+import { getProjectStatus } from "../../configs/projectStatus";
 import { PROJECT_FILTERS } from "../../configs/projectFilters";
 import { PROJECT_VIEWS } from "../../configs/projectViews";
 import { useSettingStore } from "../../stores/useSettingStore";
+import type { OpenStateProps, Project, ProjectView } from "../../types";
 
-export default function Sidebar({ open, setOpen, handleSettingOpen }) {
+type SidebarProps = OpenStateProps & {
+  handleSettingOpen: () => void;
+};
+
+export default function Sidebar({
+  open,
+  setOpen,
+  handleSettingOpen,
+}: SidebarProps) {
+  const [tab, setTab] = useState<ProjectView["value"]>("all");
+
   const projects = useProjectStore((s) => s.projects);
-  const [tab, setTab] = useState("all");
   const shouldReverse = useSettingStore((s) => s.setting.newest_project_top);
-  const filteredProjects = useMemo(() => {
-    const filterFn = PROJECT_FILTERS[tab] ?? PROJECT_FILTERS["all"];
+
+  const filteredProjects: Project[] = useMemo(() => {
+    const filterFn = PROJECT_FILTERS[tab] || PROJECT_FILTERS["all"];
     return filterFn(projects, shouldReverse);
   }, [tab, projects, shouldReverse]);
 
-  const handleChange = (e) => setTab(e.target.value);
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    let newTab = e.target.value;
+    let isValid = PROJECT_VIEWS.some((data) => data.value === newTab);
+    if (!isValid) return;
+    setTab(newTab as ProjectView["value"]);
+  };
 
   return (
     <>
@@ -99,13 +117,20 @@ export default function Sidebar({ open, setOpen, handleSettingOpen }) {
   );
 }
 
-function SidebarListItem({ project, setOpen, tab }) {
+type SidebarListItemProps = Pick<OpenStateProps, "setOpen"> & {
+  project: Project;
+  tab: ProjectView["value"];
+};
+
+function SidebarListItem({ project, setOpen, tab }: SidebarListItemProps) {
   const navigate = useNavigate();
 
-  const handleRouting = (id) => {
+  const handleRouting = (id: string) => {
     navigate(`/project/${id}`);
     setOpen(false);
   };
+
+  const projectStatus = getProjectStatus(project);
 
   return (
     <ListItem
@@ -122,10 +147,10 @@ function SidebarListItem({ project, setOpen, tab }) {
           primary={`${tab === "all" && project.pinned ? "📌" : ""} ${
             project.title
           }`}
-          secondary={projectStatus(project).status}
+          secondary={projectStatus.status}
           sx={{
             borderRight: "5px solid",
-            borderRightColor: projectStatus(project).borderColor,
+            borderRightColor: projectStatus.borderColor,
           }}
           slotProps={{
             primary: {

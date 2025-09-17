@@ -10,8 +10,10 @@ import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
 import { ProjectContext } from "../../contexts/ProjectContext";
 
 export default function ProjectActions() {
-  const { create, setCreate, expandAll, setExpandAll, drag, setDrag } =
-    useContext(ProjectContext);
+  const context = useContext(ProjectContext);
+  if (!context) return null;
+
+  const { create, setCreate, expandAll, setExpandAll, drag, setDrag } = context;
 
   // For ProjectAction
   const handleCreate = () => {

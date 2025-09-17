@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 
 import {
   Button,
@@ -19,30 +19,32 @@ import { useProjectStore } from "../../stores/useProjectStore";
 import { useNavigate } from "react-router";
 import RemindTimeField from "../../components/RemindTimeField";
 import { useSettingStore } from "../../stores/useSettingStore";
+import type { OpenStateProps, Project } from "../../types";
 
-const init_project = {
-  title: "",
-  description: "",
-  deadline: null,
-};
-
-export default function CreateProjectDialog({ open, setOpen }) {
-  const [project, setProject] = useState({ ...init_project });
+export default function CreateProjectDialog({ open, setOpen }: OpenStateProps) {
+  const remind_before = useSettingStore((s) => s.setting.remind_before);
+  const [newProject, setNewProject] = useState<
+    Pick<Project, "title" | "description" | "deadline" | "remind_before">
+  >({
+    title: "",
+    description: "",
+    deadline: null,
+    remind_before,
+  });
   const create_project = useProjectStore((s) => s.create_project);
-  const { value, unit } = useSettingStore((s) => s.setting.remind_before);
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   const navigate = useNavigate();
 
-  const handleCreate = (e) => {
+  const handleCreate = (e: React.FormEvent<HTMLDivElement>) => {
     e.preventDefault();
 
-    if (!project.title.trim()) return;
-    if (project.deadline && !dayjs(project.deadline).isValid()) return;
+    if (!newProject.title.trim()) return;
+    if (newProject.deadline && !dayjs(newProject.deadline).isValid()) return;
 
     const id = create_project({
-      ...project,
-      title: project.title.trim(),
-      description: project.description.trim(),
+      ...newProject,
+      title: newProject.title.trim(),
+      description: newProject.description.trim(),
     });
 
     setOpen(false);
@@ -68,9 +70,9 @@ export default function CreateProjectDialog({ open, setOpen }) {
         <Stack gap={2} mt={2}>
           <TextField
             label="Projec title"
-            value={project.title}
+            value={newProject.title}
             onChange={(e) =>
-              setProject((prev) => ({ ...prev, title: e.target.value }))
+              setNewProject((prev) => ({ ...prev, title: e.target.value }))
             }
             required
             autoComplete="off"
@@ -80,29 +82,32 @@ export default function CreateProjectDialog({ open, setOpen }) {
             <DateTimeField
               label="Deadline"
               format="YYYY/MM/DD HH:mm"
-              value={project.deadline && dayjs(project.deadline)}
-              onClick={() =>
-                setProject((prev) => ({ ...prev, deadline: dayjs() }))
-              }
-              onChange={(v) => {
-                setProject((prev) => ({ ...prev, deadline: v }));
+              value={newProject.deadline ? dayjs(newProject.deadline) : null}
+              onChange={(newValue: Dayjs | null) => {
+                setNewProject((prev) => ({ ...prev, deadline: newValue }));
               }}
               clearable
             />
           </LocalizationProvider>
           <RemindTimeField
             {...{
-              remind_before: { value, unit },
+              remind_before,
               onChange: (value, unit) => {
-                setProject((p) => ({ ...p, remind_before: { value, unit } }));
+                setNewProject((p) => ({
+                  ...p,
+                  remind_before: { value, unit },
+                }));
               },
             }}
           />
           <TextField
             label="Description"
-            value={project.description}
+            value={newProject.description}
             onChange={(e) =>
-              setProject((prev) => ({ ...prev, description: e.target.value }))
+              setNewProject((prev) => ({
+                ...prev,
+                description: e.target.value,
+              }))
             }
             autoComplete="off"
             multiline

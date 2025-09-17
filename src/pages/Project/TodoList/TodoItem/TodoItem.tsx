@@ -14,10 +14,18 @@ import { useProjectStore } from "../../../../stores/useProjectStore";
 import { ProjectContext } from "../../../../contexts/ProjectContext";
 import { TodoContext } from "../../../../contexts/TodoContext";
 import DragSubTodos from "./DragSubTodos/DragSubTodos";
+import type { Todo } from "../../../../types";
 
-export default function TodoItem({ todo }) {
-  const { expandAll, project } = useContext(ProjectContext);
-  const [anchorEl, setAnchorEl] = useState(null);
+interface TodoItemProps {
+  todo: Todo;
+}
+
+export default function TodoItem({ todo }: TodoItemProps) {
+  const context = useContext(ProjectContext);
+  if (!context) return null;
+
+  const { expandAll, project } = context;
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [edit, setEdit] = useState(false);
   const [create, setCreate] = useState(false);
   const [expand, setExpand] = useState(false);
@@ -39,32 +47,36 @@ export default function TodoItem({ todo }) {
     todo,
   };
 
-  const handleCheck = (e) => {
+  const handleCheck = (checked: boolean) => {
     update_todo(project.id, todo.id, {
-      completed: e.target.checked,
+      completed: checked,
       subTodos: todo.subTodos.map((st) => ({
         ...st,
-        completed: e.target.checked,
+        completed: checked,
       })),
     });
   };
 
+  /////////////////
   // edit TitleForm
   const handleCancelEdit = () => {
     setEdit(false);
   };
 
-  const handleTitleChange = (e, newTitle) => {
+  const handleTitleChange = (
+    e: React.FormEvent<HTMLFormElement>,
+    newTitle: string
+  ) => {
     e.preventDefault();
-    if (!newTitle.trim()) {
-      return;
-    }
+    if (!newTitle.trim()) return;
+
     setEdit(false);
     update_todo(project.id, todo.id, {
       title: newTitle.trim(),
     });
   };
   // edit TitleForm
+  /////////////////
 
   useEffect(() => {
     setExpand(expandAll);
@@ -96,10 +108,8 @@ export default function TodoItem({ todo }) {
         >
           <Checkbox
             checked={todo.completed}
-            onChange={handleCheck}
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
+            onChange={(_, checked) => handleCheck(checked)}
+            onClick={(e) => e.stopPropagation()}
             disabled={drag}
           />
           {edit ? (

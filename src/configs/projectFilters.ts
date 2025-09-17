@@ -1,6 +1,10 @@
-import { projectStatus } from "../configs/projectStatus";
+import type { Project, ProjectView } from "./../types";
+import { getProjectStatus } from "../configs/projectStatus";
 
-export const PROJECT_FILTERS = {
+export const PROJECT_FILTERS: Record<
+  ProjectView["value"],
+  (projects: Project[], shouldReverse: boolean) => Project[]
+> = {
   all: (projects, shouldReverse) => {
     let pinned = projects.filter((p) => p.pinned);
     let unpinned = projects.filter((p) => !p.pinned);
@@ -9,11 +13,11 @@ export const PROJECT_FILTERS = {
     return [...pinned, ...unpinned];
   },
   completed: (projects) =>
-    projects.filter((p) => projectStatus(p).statusCode === 1),
+    projects.filter((p) => getProjectStatus(p).statusCode === 1),
   overdue: (projects) =>
-    projects.filter((p) => projectStatus(p).statusCode === 2),
+    projects.filter((p) => getProjectStatus(p).statusCode === 2),
   urgent: (projects) =>
-    projects.filter((p) => projectStatus(p).statusCode === 3),
+    projects.filter((p) => getProjectStatus(p).statusCode === 3),
   active: (projects) =>
-    projects.filter((p) => projectStatus(p).statusCode === 4),
+    projects.filter((p) => getProjectStatus(p).statusCode === 4),
 };

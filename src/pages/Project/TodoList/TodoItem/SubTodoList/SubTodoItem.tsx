@@ -13,10 +13,19 @@ import TodoWrapper from "../../../../../components/TodoWrapper";
 import ConfirmDialog from "../../../../../components/ConfirmDialog";
 import { TodoContext } from "../../../../../contexts/TodoContext";
 import { ProjectContext } from "../../../../../contexts/ProjectContext";
+import type { SubTodo } from "../../../../../types";
 
-export default function SubTodoItem({ subTodo: st }) {
-  const { todo } = useContext(TodoContext);
-  const { project } = useContext(ProjectContext);
+interface SubTodoItemProps {
+  subTodo: SubTodo;
+}
+
+export default function SubTodoItem({ subTodo: st }: SubTodoItemProps) {
+  const todoContext = useContext(TodoContext);
+  const projectContext = useContext(ProjectContext);
+  if (!todoContext || !projectContext) return null;
+
+  const { todo } = todoContext;
+  const { project } = projectContext;
   const [edit, setEdit] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
 
@@ -24,9 +33,9 @@ export default function SubTodoItem({ subTodo: st }) {
   const delete_subTodo = useProjectStore((s) => s.delete_subTodo);
   const ask_before_delete = useSettingStore((s) => s.setting.ask_before_delete);
 
-  const handleCheck = (e, st) => {
+  const handleCheck = (checked: boolean) => {
     update_subTodo(project.id, todo.id, st.id, {
-      completed: e.target.checked,
+      completed: checked,
     });
   };
 
@@ -48,7 +57,10 @@ export default function SubTodoItem({ subTodo: st }) {
     setEdit(false);
   };
 
-  const handleTitleChange = (e, newTitle) => {
+  const handleTitleChange = (
+    e: React.FormEvent<HTMLFormElement>,
+    newTitle: string
+  ) => {
     e.preventDefault();
     if (!newTitle.trim()) return;
     update_subTodo(project.id, todo.id, st.id, { title: newTitle.trim() });
@@ -61,7 +73,7 @@ export default function SubTodoItem({ subTodo: st }) {
         <Stack direction="row" gap={1} sx={{ alignItems: "center" }}>
           <Checkbox
             checked={st.completed}
-            onChange={(e) => handleCheck(e, st)}
+            onChange={(_, checked) => handleCheck(checked)}
           />
           {edit ? (
             <TitleForm

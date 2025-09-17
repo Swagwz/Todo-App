@@ -12,30 +12,39 @@ import DragTodos from "./DragTodos/DragTodos";
 import { useProjectStore } from "../../../stores/useProjectStore";
 import { ProjectContext } from "../../../contexts/ProjectContext";
 import { useSettingStore } from "../../../stores/useSettingStore";
+import type { Todo } from "../../../types";
 
 export default function TodoList() {
-  const { create, setCreate, drag, project } = useContext(ProjectContext);
+  const context = useContext(ProjectContext);
+  if (!context) return null;
+
+  const { create, setCreate, drag, project } = context;
   const create_todo = useProjectStore((s) => s.create_todo);
   const shouldReverse = useSettingStore((s) => s.setting.newest_todo_top);
-  const displayed_todos = useMemo(
+  const displayed_todos: Todo[] = useMemo(
     () => (shouldReverse ? [...project.todos].reverse() : project.todos),
     [project, shouldReverse]
   );
 
+  /////////////////
   // create TitleForm
   const handleCancel = () => {
     setCreate(false);
   };
 
-  const handleSubmit = (e, newTitle) => {
+  const handleSubmit = (
+    e: React.FormEvent<HTMLFormElement>,
+    newTitle: string
+  ) => {
     e.preventDefault();
     if (!newTitle.trim()) {
       return;
     }
-    create_todo(project.id, { title: newTitle.trim() });
+    create_todo(project.id, newTitle.trim());
     setCreate(false);
   };
   // create TitleForm
+  /////////////////
   return (
     <Stack gap={2}>
       <AnimatePresence mode="wait">

@@ -12,14 +12,17 @@ import NoProject from "./NoProject";
 import { PROJECT_VIEWS } from "../../configs/projectViews";
 import { PROJECT_FILTERS } from "../../configs/projectFilters";
 import { useSettingStore } from "../../stores/useSettingStore";
+import type { ProjectView } from "../../types";
 
 export default function Home() {
-  const [tab, setTab] = useState("all");
+  const [tab, setTab] = useState<ProjectView["value"]>("all");
   const shouldReverse = useSettingStore((s) => s.setting.newest_project_top);
 
   const update_setting = useSettingStore((s) => s.update_setting);
+
   const projects = useProjectStore((s) => s.projects);
   const delete_project = useProjectStore((s) => s.delete_project);
+
   const location = useLocation();
 
   const filteredProjects = useMemo(() => {
@@ -56,7 +59,6 @@ export default function Home() {
                 <Chip
                   key={value}
                   label={label}
-                  value={value}
                   color={tab === value ? color : "default"}
                   onClick={() => setTab(value)}
                 />

@@ -1,8 +1,55 @@
 import { create } from "zustand";
+import type { Project, RemindBefore, SubTodo, Todo } from "../types";
+import type { Dayjs } from "dayjs";
 
-export const useProjectStore = create((set, get) => ({
+interface ProjectStore {
+  projects: Project[];
+
+  create_project: (data: {
+    title: string;
+    deadline: Dayjs | Date | null;
+    description: string;
+    remind_before: RemindBefore;
+  }) => string;
+  delete_project: (project_id: string) => void;
+  update_project: (project_id: string, data: Partial<Project>) => void;
+  get_project: (project_id: string) => Project | undefined;
+
+  todo_updater: (
+    project_id: string,
+    updateFn: (prev_todos: Todo[]) => Todo[]
+  ) => void;
+  create_todo: (project_id: string, title: string) => void;
+  delete_todo: (project_id: string, todo_id: string) => void;
+  update_todo: (
+    project_id: string,
+    todo_id: string,
+    data: Partial<Todo>
+  ) => void;
+  get_todo: (project_id: string, todo_id: string) => Todo | undefined;
+
+  subTodos_updater: (
+    project_id: string,
+    todo_id: string,
+    updateFn: (prev_subTodos: SubTodo[]) => SubTodo[]
+  ) => void;
+  create_subTodo: (project_id: string, todo_id: string, title: string) => void;
+  delete_subTodo: (
+    project_id: string,
+    todo_id: string,
+    subTodo_id: string
+  ) => void;
+  update_subTodo: (
+    project_id: string,
+    todo_id: string,
+    subTodo_id: string,
+    data: Partial<SubTodo>
+  ) => void;
+}
+
+export const useProjectStore = create<ProjectStore>()((set, get) => ({
   projects: localStorage.getItem("projects")
-    ? JSON.parse(localStorage.getItem("projects"))
+    ? JSON.parse(localStorage.getItem("projects") || "")
     : [],
 
   create_project: (data) => {
@@ -24,24 +71,24 @@ export const useProjectStore = create((set, get) => ({
     return id;
   },
 
-  delete_project: (target_id) => {
+  delete_project: (project_id) => {
     set((state) => ({
-      projects: state.projects.filter((p) => p.id !== target_id),
+      projects: state.projects.filter((p) => p.id !== project_id),
     }));
   },
 
-  update_project: (target_id, data) => {
+  update_project: (project_id, data) => {
     set((state) => ({
       projects: state.projects.map((p) => {
-        if (p.id === target_id) {
+        if (p.id === project_id) {
           return { ...p, ...data, updateAt: Date.now() };
         } else return p;
       }),
     }));
   },
 
-  get_project: (target_id) => {
-    return get().projects.find((p) => p.id === target_id);
+  get_project: (project_id) => {
+    return get().projects.find((p) => p.id === project_id);
   },
 
   todo_updater: (project_id, updateFn) => {
@@ -62,29 +109,29 @@ export const useProjectStore = create((set, get) => ({
     });
   },
 
-  create_todo: (project_id, data) => {
+  create_todo: (project_id, title) => {
     get().todo_updater(project_id, (prev_todos) => [
       ...prev_todos,
-      { ...data, id: crypto.randomUUID(), completed: false, subTodos: [] },
+      { title, id: crypto.randomUUID(), completed: false, subTodos: [] },
     ]);
   },
 
-  delete_todo: (project_id, target_id) => {
+  delete_todo: (project_id, todo_id) => {
     get().todo_updater(project_id, (prev_todos) =>
-      prev_todos.filter((t) => t.id !== target_id)
+      prev_todos.filter((t) => t.id !== todo_id)
     );
   },
 
-  update_todo: (project_id, target_id, data) => {
+  update_todo: (project_id, todo_id, data) => {
     get().todo_updater(project_id, (prev_todos) =>
-      prev_todos.map((t) => (t.id !== target_id ? t : { ...t, ...data }))
+      prev_todos.map((t) => (t.id !== todo_id ? t : { ...t, ...data }))
     );
   },
 
-  get_todo: (project_id, target_id) => {
+  get_todo: (project_id, todo_id) => {
     let found_project = get().projects.find((p) => p.id === project_id);
     if (!found_project) return;
-    return found_project.todos.find((t) => t.id === target_id);
+    return found_project.todos.find((t) => t.id === todo_id);
   },
 
   subTodos_updater: (project_id, todo_id, updateFn) => {
@@ -116,22 +163,24 @@ export const useProjectStore = create((set, get) => ({
     });
   },
 
-  create_subTodo: (project_id, todo_id, data) => {
+  create_subTodo: (project_id, todo_id, title) => {
     get().subTodos_updater(project_id, todo_id, (prev_subTodos) => [
       ...prev_subTodos,
-      { ...data, id: crypto.randomUUID(), completed: false },
+      { title, id: crypto.randomUUID(), completed: false },
     ]);
   },
 
-  delete_subTodo: (project_id, todo_id, target_id) => {
+  delete_subTodo: (project_id, todo_id, subTodo_id) => {
     get().subTodos_updater(project_id, todo_id, (prev_subTodos) =>
-      prev_subTodos.filter((st) => st.id !== target_id)
+      prev_subTodos.filter((st) => st.id !== subTodo_id)
     );
   },
 
-  update_subTodo: (project_id, todo_id, target_id, data) => {
+  update_subTodo: (project_id, todo_id, subTodo_id, data) => {
     get().subTodos_updater(project_id, todo_id, (prev_subTodos) =>
-      prev_subTodos.map((st) => (st.id !== target_id ? st : { ...st, ...data }))
+      prev_subTodos.map((st) =>
+        st.id !== subTodo_id ? st : { ...st, ...data }
+      )
     );
   },
 }));

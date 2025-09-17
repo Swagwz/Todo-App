@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, type SetStateAction } from "react";
 import { useNavigate } from "react-router";
 
 import {
@@ -26,15 +26,18 @@ import { useProjectStore } from "../../../stores/useProjectStore";
 import { ProjectContext } from "../../../contexts/ProjectContext";
 
 export default function ProjectHeader() {
-  const { project } = useContext(ProjectContext);
-  const [anchorEl, setAnchorEl] = useState(null);
+  const context = useContext(ProjectContext);
+  if (!context) return null;
+
+  const { project } = context;
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [edit, setEdit] = useState(false);
   const [show, setShow] = useState(false);
 
   const update = useProjectStore((s) => s.update_project);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(e.currentTarget);
   };
 
   const handlePin = () => {
@@ -98,7 +101,14 @@ export default function ProjectHeader() {
   );
 }
 
-function ProjectMenu({ anchorEl, setAnchorEl, setEdit, id }) {
+interface ProjectMenuProps {
+  anchorEl: HTMLElement | null;
+  setAnchorEl: React.Dispatch<SetStateAction<HTMLElement | null>>;
+  setEdit: React.Dispatch<SetStateAction<boolean>>;
+  id: string;
+}
+
+function ProjectMenu({ anchorEl, setAnchorEl, setEdit, id }: ProjectMenuProps) {
   const [openDialog, setOpenDialog] = useState(false);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();

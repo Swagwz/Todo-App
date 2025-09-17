@@ -13,9 +13,13 @@ import { useProjectStore } from "../../../../../stores/useProjectStore";
 import { useSettingStore } from "../../../../../stores/useSettingStore";
 
 export default function SubTodoList() {
-  const { project } = useContext(ProjectContext);
-  const { expand, create, setCreate, setExpand, todo } =
-    useContext(TodoContext);
+  const todoContext = useContext(TodoContext);
+  const projectContext = useContext(ProjectContext);
+  if (!todoContext || !projectContext) return null;
+
+  const { project } = projectContext;
+  const { expand, create, setCreate, setExpand, todo } = todoContext;
+
   const shouldReverse = useSettingStore((s) => s.setting.newest_todo_top);
   const displayed_subTodos = shouldReverse
     ? [...todo.subTodos].reverse()
@@ -26,12 +30,15 @@ export default function SubTodoList() {
     setCreate(false);
   };
 
-  const handleSubmit = (e, newTitle) => {
+  const handleSubmit = (
+    e: React.FormEvent<HTMLFormElement>,
+    newTitle: string
+  ) => {
     e.preventDefault();
     if (!newTitle.trim()) {
       return;
     }
-    create_subTodo(project.id, todo.id, { title: newTitle.trim() });
+    create_subTodo(project.id, todo.id, newTitle.trim());
     setCreate(false);
     setExpand(true);
   };

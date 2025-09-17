@@ -11,11 +11,15 @@ export default function TitleForm({
   handleSubmit,
   handleCancel,
   origin_title = "",
+}: {
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>, newTitle: string) => void;
+  handleCancel: () => void;
+  origin_title?: string;
 }) {
   const [title, setTitle] = useState(origin_title);
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
 
-  useEffect(() => inputRef.current.focus(), []);
+  useEffect(() => inputRef.current?.focus(), []);
   return (
     <Stack
       direction="row"
@@ -33,7 +37,7 @@ export default function TitleForm({
         required
         inputRef={inputRef}
         value={title}
-        onChange={(e) => setTitle(e.target.value)}
+        setInput={setTitle}
       />
       <Stack direction="row">
         <IconButton title="save" type="submit" size="small">

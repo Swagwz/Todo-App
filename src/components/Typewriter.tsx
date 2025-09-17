@@ -1,28 +1,25 @@
 import { useEffect, useState } from "react";
 // eslint-disable-next-line
 import { motion } from "motion/react";
-import { Box } from "@mui/material";
+import { Box, type SxProps, type Theme } from "@mui/material";
 
-/**
- *
- * @param {{
- * text: string | string[],
- * style?: import("@mui/material/Typography").TypographyProps,
- * speed?: number,
- * delay?: number,
- * repeat?: boolean,
- * stopBlinking?: boolean
- * }} params
- * @returns {JSX.Element}
- */
+interface TypewriterProps {
+  text: string | string[];
+  style?: SxProps<Theme>;
+  speed?: number;
+  delay?: number;
+  repeat?: boolean;
+  stopBlinking?: boolean;
+}
+
 export default function Typewriter({
-  text = "Hello, world!",
+  text,
   style,
   speed = 100,
   delay = 0,
   repeat = false,
   stopBlinking = false,
-}) {
+}: TypewriterProps) {
   const [displayText, setDisplayText] = useState("");
   const [finished, setFinished] = useState(false);
 
@@ -34,7 +31,7 @@ export default function Typewriter({
     let forward = true;
     let i = 0;
     let j = 0;
-    let interval;
+    let interval: number;
 
     const start = () => {
       interval = setInterval(() => {

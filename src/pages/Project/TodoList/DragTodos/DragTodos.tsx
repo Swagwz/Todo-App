@@ -6,6 +6,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  type DragEndEvent,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -13,31 +14,35 @@ import {
   SortableContext,
 } from "@dnd-kit/sortable";
 
-import { findIndex } from "../../../../utils/findIndex";
 import { ProjectContext } from "../../../../contexts/ProjectContext";
 import { useProjectStore } from "../../../../stores/useProjectStore";
-import TodoDragPreview from "./TodoDragPreview";
 import { useSettingStore } from "../../../../stores/useSettingStore";
+import TodoDragPreview from "./TodoDragPreview";
+import type { Todo } from "../../../../types";
 
 export default function DragTodos() {
-  const { project } = useContext(ProjectContext);
+  const context = useContext(ProjectContext);
+  if (!context) return null;
+
+  const { project } = context;
   const update_project = useProjectStore((s) => s.update_project);
   const shouldReverse = useSettingStore((s) => s.setting.newest_todo_top);
-  const displayed_todos = useMemo(
+  const displayed_todos: Todo[] = useMemo(
     () => (shouldReverse ? [...project.todos].reverse() : project.todos),
     [project, shouldReverse]
   );
   const sensors = useSensors(useSensor(PointerSensor));
-  const handleDragEnd = (event) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
-    if (active.id !== over.id) {
-      const oldIndex = findIndex(project.todos, active.id);
-      const newIndex = findIndex(project.todos, over.id);
+    if (over && active.id !== over.id) {
+      const oldIndex = project.todos.findIndex((todo) => todo.id === active.id);
+      const newIndex = project.todos.findIndex((todo) => todo.id === over.id);
       const newArr = arrayMove(project.todos, oldIndex, newIndex);
       update_project(project.id, { todos: newArr });
     }
   };
+
   return (
     <DndContext
       sensors={sensors}

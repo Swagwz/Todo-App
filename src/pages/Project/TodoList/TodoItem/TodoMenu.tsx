@@ -16,14 +16,18 @@ import { useProjectStore } from "../../../../stores/useProjectStore";
 import { useSettingStore } from "../../../../stores/useSettingStore";
 
 export default function TodoMenu() {
-  const { anchorEl, setAnchorEl, setEdit, setCreate, setDrag, todo } =
-    useContext(TodoContext);
-  const { project } = useContext(ProjectContext);
+  const todoContext = useContext(TodoContext);
+  const projectContext = useContext(ProjectContext);
+  if (!todoContext || !projectContext) return null;
 
-  const delete_todo = useProjectStore((s) => s.delete_todo);
-  const open = Boolean(anchorEl);
-  const ask_before_delete = useSettingStore((s) => s.setting.ask_before_delete);
+  const { anchorEl, setAnchorEl, setEdit, setCreate, setDrag, todo } =
+    todoContext;
+  const { project } = projectContext;
+
   const [openConfirm, setOpenConfirm] = useState(false);
+  const delete_todo = useProjectStore((s) => s.delete_todo);
+  const ask_before_delete = useSettingStore((s) => s.setting.ask_before_delete);
+  const open = Boolean(anchorEl);
 
   const handleCreate = () => {
     setAnchorEl(null);

@@ -13,14 +13,17 @@ import CloseIcon from "@mui/icons-material/Close";
 
 import { useSettingStore } from "../../stores/useSettingStore";
 import RemindTimeField from "../../components/RemindTimeField";
+import { Bool_Setting } from "../../configs/defaultSetting";
+import type { OpenStateProps, SettingKey } from "../../types";
 
-export default function SettingDialog({ open, setOpen }) {
+export default function SettingDialog({ open, setOpen }: OpenStateProps) {
   const setting = useSettingStore((s) => s.setting);
   const update_setting = useSettingStore((s) => s.update_setting);
 
   useEffect(() => {
     localStorage.setItem("setting", JSON.stringify(setting));
   }, [setting]);
+
   return (
     <Dialog
       open={open}
@@ -39,16 +42,11 @@ export default function SettingDialog({ open, setOpen }) {
 
       <DialogContent dividers>
         <Stack gap={1}>
-          <SwitchSettingItem title="Dark mode" />
-          <SwitchSettingItem title="Expand all" />
-          <SwitchSettingItem title="Ask before delete" />
-          <SwitchSettingItem title="Newest project top" />
-          <SwitchSettingItem title="Newest todo top" />
+          {Bool_Setting.map(([key]) => (
+            <SwitchSettingItem setting_key={key} key={key} />
+          ))}
           <RemindTimeField
-            remind_before={{
-              value: setting.remind_before.value,
-              unit: setting.remind_before.unit,
-            }}
+            remind_before={setting.remind_before}
             onChange={(value, unit) =>
               update_setting({ remind_before: { value, unit } })
             }
@@ -59,21 +57,26 @@ export default function SettingDialog({ open, setOpen }) {
   );
 }
 
-function SwitchSettingItem({ title }) {
-  const setting_key = title.toLowerCase().split(" ").join("_");
+interface SwitchSettingItemProps {
+  setting_key: SettingKey;
+}
+
+function SwitchSettingItem({ setting_key }: SwitchSettingItemProps) {
   const checked = useSettingStore((s) => s.setting[setting_key]);
   const update = useSettingStore((s) => s.update_setting);
 
-  const handleCheck = (e) => {
-    update({ [setting_key]: e.target.checked });
-  };
   return (
     <Stack
       direction="row"
       sx={{ alignItems: "center", justifyContent: "space-between" }}
     >
-      <Typography>{title}</Typography>
-      <Switch checked={checked} onChange={handleCheck} />
+      <Typography sx={{ textTransform: "capitalize" }}>
+        {setting_key.split("_").join(" ")}
+      </Typography>
+      <Switch
+        checked={checked}
+        onChange={(_, checked) => update({ [setting_key]: checked })}
+      />
     </Stack>
   );
 }

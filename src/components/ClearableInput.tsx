@@ -1,36 +1,32 @@
-import React from "react";
-import { IconButton, TextField } from "@mui/material";
+import React, { type SetStateAction } from "react";
+import { IconButton, TextField, type TextFieldProps } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 
-/**@typedef {import('@mui/material/TextField').TextFieldProps} TextFieldProps */
-/**
- * @param {TextFieldProps} props
- */
-export default function ClearableInput(props) {
-  const { value, onChange } = props;
+type ClearableInputProps = TextFieldProps & {
+  setInput: React.Dispatch<SetStateAction<string>>;
+};
+
+export default function ClearableInput(props: ClearableInputProps) {
+  const { value, setInput, ...rest } = props;
   return (
     <TextField
       value={value}
-      onChange={onChange}
+      onChange={(e) => setInput(e.target.value)}
       slotProps={{
         input: {
-          endAdornment: props.value && (
+          endAdornment: value ? (
             <IconButton
               size="small"
               title="clear input"
               aria-label="clear input"
-              onClick={() =>
-                onChange?.({
-                  target: { value: "" },
-                })
-              }
+              onClick={() => setInput("")}
             >
               <ClearIcon />
             </IconButton>
-          ),
+          ) : null,
         },
       }}
-      {...props}
+      {...rest}
     />
   );
 }

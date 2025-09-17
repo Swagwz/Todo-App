@@ -1,24 +1,17 @@
-import { Box } from "@mui/material";
+import { Box, type BoxProps, type SxProps, type Theme } from "@mui/material";
 
-/**
- * @typedef {"primary" | "secondary"} Variant
- *
- * @typedef {import("@mui/material/Box").BoxProps & {
- *   variant?: Variant
- * }} TodoWrapperProps
- */
+type TodoWrapperProps = BoxProps & {
+  variant?: "primary" | "secondary";
+};
 
-/**
- * @param {TodoWrapperProps} props
- */
-export default function TodoWrapper(props) {
+export default function TodoWrapper(props: TodoWrapperProps) {
   const { sx, children, variant = "primary", ...rest } = props;
-  let customStyle;
+  let customStyle: SxProps<Theme>;
 
-  if (variant === "primary") {
-    customStyle = { bgcolor: "background.primary" };
-  } else if (variant === "secondary") {
+  if (variant === "secondary") {
     customStyle = { bgcolor: "background.secondary", ml: 4 };
+  } else {
+    customStyle = { bgcolor: "background.primary" };
   }
 
   return (

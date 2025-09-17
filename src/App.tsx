@@ -27,6 +27,13 @@ const fontFamily = [
   '"Segoe UI Symbol"',
 ].join(",");
 
+declare module "@mui/material/styles" {
+  interface TypeBackground {
+    primary: string;
+    secondary: string;
+  }
+}
+
 const dark = createTheme({
   palette: {
     mode: "dark",

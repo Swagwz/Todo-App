@@ -6,6 +6,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  type DragEndEvent,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -17,29 +18,33 @@ import { Stack } from "@mui/material";
 
 import SubTodoDragPreview from "./SubTodoDragPreview";
 
-import { findIndex } from "../../../../../utils/findIndex";
 import { useProjectStore } from "../../../../../stores/useProjectStore";
 
 import { TodoContext } from "../../../../../contexts/TodoContext";
 import { ProjectContext } from "../../../../../contexts/ProjectContext";
 import { useSettingStore } from "../../../../../stores/useSettingStore";
+import type { SubTodo } from "../../../../../types";
 
 export default function DragSubTodos() {
-  const { project } = useContext(ProjectContext);
-  const { todo } = useContext(TodoContext);
+  const todoContext = useContext(TodoContext);
+  const projectContext = useContext(ProjectContext);
+  if (!todoContext || !projectContext) return null;
+
+  const { project } = projectContext;
+  const { todo } = todoContext;
   const shouldReverse = useSettingStore((s) => s.setting.newest_todo_top);
   const displayed_subTodos = shouldReverse
     ? [...todo.subTodos].reverse()
     : todo.subTodos;
   const update_todo = useProjectStore((s) => s.update_todo);
   const sensors = useSensors(useSensor(PointerSensor));
-  const handleDragEnd = (event) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
-    if (active.id !== over.id) {
-      const oldIndex = findIndex(todo.subTodos, active.id);
-      const newIndex = findIndex(todo.subTodos, over.id);
-      const newArr = arrayMove(todo.subTodos, oldIndex, newIndex);
+    if (over && active.id !== over.id) {
+      const oldIndex = todo.subTodos.findIndex((st) => st.id === active.id);
+      const newIndex = todo.subTodos.findIndex((st) => st.id === over.id);
+      const newArr = arrayMove<SubTodo>(todo.subTodos, oldIndex, newIndex);
       update_todo(project.id, todo.id, { subTodos: newArr });
     }
   };

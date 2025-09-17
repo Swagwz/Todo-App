@@ -1,6 +1,15 @@
+import type { TypographyProps } from "@mui/material";
+import type { Project } from "../types";
 import { isOverdue, isUrgent } from "../utils/checkTime";
 
-export function projectStatus(project) {
+interface ProjectStatus {
+  statusCode: 0 | 1 | 2 | 3 | 4;
+  status: string;
+  color: TypographyProps["color"];
+  borderColor: string;
+}
+
+export function getProjectStatus(project: Project): ProjectStatus {
   if (project.todos.length === 0)
     return {
       statusCode: 0,

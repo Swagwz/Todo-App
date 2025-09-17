@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import { motion } from "motion/react";
+import { motion, type Variants } from "motion/react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -10,8 +10,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import TodoWrapper from "../../../../../components/TodoWrapper";
+import type { SubTodo } from "../../../../../types";
 
-const variant = {
+const variant: Variants = {
   hidden: {
     width: 0,
     opacity: 0,
@@ -24,7 +25,13 @@ const variant = {
   },
 };
 
-export default function SubTodoDragPreview({ subTodo: st }) {
+interface SubTodoDragPreviewProps {
+  subTodo: SubTodo;
+}
+
+export default function SubTodoDragPreview({
+  subTodo: st,
+}: SubTodoDragPreviewProps) {
   const {
     attributes,
     listeners,
@@ -40,6 +47,7 @@ export default function SubTodoDragPreview({ subTodo: st }) {
     zIndex: isDragging ? 999 : "auto",
     touchAction: "none",
   };
+
   return (
     <TodoWrapper variant="secondary" style={style} ref={setNodeRef}>
       <Stack direction="row" gap={1} sx={{ alignItems: "center" }}>

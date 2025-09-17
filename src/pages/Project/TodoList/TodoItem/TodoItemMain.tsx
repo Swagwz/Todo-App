@@ -9,8 +9,10 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { TodoContext } from "../../../../contexts/TodoContext";
 
 export default function TodoItemMain() {
-  const { todo, expand, setExpand, setAnchorEl, setDrag, drag } =
-    useContext(TodoContext);
+  const context = useContext(TodoContext);
+  if (!context) return null;
+
+  const { todo, expand, setExpand, setAnchorEl, setDrag, drag } = context;
 
   return (
     <>

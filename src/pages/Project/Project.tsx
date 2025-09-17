@@ -23,12 +23,16 @@ export default function Project() {
   const setting_expand_all = useSettingStore((s) => s.setting.expand_all);
 
   const { id } = useParams();
-  const project = useProjectStore((s) => s.get_project(id));
+  const project = useProjectStore((s) => s.get_project(id || ""));
 
   useEffect(() => {
     setCreate(false);
     setExpandAll(setting_expand_all);
   }, [id, setting_expand_all]);
+
+  if (!project) {
+    return <NotFound />;
+  }
 
   const contextValue = {
     create,
@@ -40,9 +44,6 @@ export default function Project() {
     project,
   };
 
-  if (!project) {
-    return <NotFound />;
-  }
   return (
     <ProjectContext.Provider value={contextValue}>
       <Paper sx={{ p: 2 }}>

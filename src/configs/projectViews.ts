@@ -1,4 +1,6 @@
-export const PROJECT_VIEWS = [
+import type { ProjectView } from "../types";
+
+export const PROJECT_VIEWS: ProjectView[] = [
   { value: "all", label: "All", title: "All projects", color: "primary" },
   { value: "active", label: "Active", title: "Working on", color: "info" },
   {

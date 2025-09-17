@@ -7,6 +7,13 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
+import type { OpenStateProps } from "../types";
+
+type ConfirmDialogProps = OpenStateProps & {
+  title?: string;
+  message?: string;
+  onConfirm: () => void;
+};
 
 export default function ConfirmDialog({
   open,
@@ -14,7 +21,7 @@ export default function ConfirmDialog({
   title,
   message,
   onConfirm,
-}) {
+}: ConfirmDialogProps) {
   return (
     <Dialog open={open}>
       <DialogTitle>{title || "Are you sure?"}</DialogTitle>

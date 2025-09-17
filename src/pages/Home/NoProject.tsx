@@ -32,11 +32,12 @@ const btn_variants = {
   },
 };
 
+const TEXT = "Create your todo";
+const SPEED = 100;
+const DELAY = (TEXT.length + 2) * SPEED;
+
 export default function NoProject() {
   const [open, setOpen] = useState(false);
-  const text = "Create your todo";
-  const speed = 100;
-  const delay = (text.length + 2) * speed;
 
   return (
     <Box
@@ -52,11 +53,11 @@ export default function NoProject() {
       }}
     >
       <Typewriter
-        text={text}
+        text={TEXT}
         style={{ fontSize: 32, color: "text.main" }}
         stopBlinking={true}
       />
-      <DelayMount delay={delay}>
+      <DelayMount delay={DELAY}>
         <motion.div
           variants={btn_variants}
           initial="hidden"

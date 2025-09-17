@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 
-export default function DelayMount({ delay = 0, children }) {
+interface DelayMountProps {
+  delay?: number;
+  children: React.ReactNode;
+}
+
+export default function DelayMount({ delay = 0, children }: DelayMountProps) {
   const [show, setShow] = useState(delay === 0);
 
   useEffect(() => {

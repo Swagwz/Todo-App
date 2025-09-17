@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import { motion } from "motion/react";
+import { motion, type Variants } from "motion/react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -10,8 +10,9 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
 import TodoWrapper from "../../../../components/TodoWrapper";
+import type { Todo } from "../../../../types";
 
-const variant = {
+const variant: Variants = {
   hidden: {
     width: 0,
     opacity: 0,
@@ -24,7 +25,11 @@ const variant = {
   },
 };
 
-export default function TodoDragPreview({ todo }) {
+interface TodoDragPreviewProps {
+  todo: Todo;
+}
+
+export default function TodoDragPreview({ todo }: TodoDragPreviewProps) {
   const {
     attributes,
     listeners,

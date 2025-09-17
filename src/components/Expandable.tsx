@@ -1,7 +1,12 @@
 // eslint-disable-next-line
 import { motion } from "motion/react";
 
-export default function Expandable({ children, expand }) {
+interface ExpandableProps {
+  children: React.ReactNode;
+  expand: boolean;
+}
+
+export default function Expandable({ children, expand }: ExpandableProps) {
   return (
     <motion.div
       initial={false}

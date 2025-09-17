@@ -29,6 +29,7 @@ export default function RootLayout() {
     setOpenSidebar(false);
     setOpenSetting(true);
   };
+
   return (
     <>
       <AppBar>
