@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 
 import {
   Button,
