@@ -82,9 +82,13 @@ export default function CreateProjectDialog({ open, setOpen }: OpenStateProps) {
             <DateTimeField
               label="Deadline"
               format="YYYY/MM/DD HH:mm"
-              value={newProject.deadline ? dayjs(newProject.deadline) : null}
-              onChange={(newValue: Dayjs | null) => {
-                setNewProject((prev) => ({ ...prev, deadline: newValue }));
+              value={newProject.deadline && dayjs(newProject.deadline)}
+              onClick={() => {
+                !newProject.deadline &&
+                  setNewProject((prev) => ({ ...prev, deadline: dayjs() }));
+              }}
+              onChange={(v) => {
+                setNewProject((prev) => ({ ...prev, deadline: v }));
               }}
               clearable
             />
