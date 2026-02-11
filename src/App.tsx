@@ -60,6 +60,8 @@ const light = createTheme({
   typography: { fontFamily },
 });
 
+console.log("Hello");
+
 function App() {
   const projects = useProjectStore((s) => s.projects);
   const setting = useSettingStore((s) => s.setting);
