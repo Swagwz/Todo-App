@@ -7,5 +7,5 @@ export default defineConfig({
   server: {
     open: true,
   },
-  base: "/Todo-App/",
+  base: "/Todo-App/#",
 });
